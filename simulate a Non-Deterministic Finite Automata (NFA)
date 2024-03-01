@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    char state;
+    int to[2];
+} transition;
+
+int main() {
+    int i, j, k, accepting, states, final_states, transitions_count, str_len;
+    char str[MAX_SIZE];
+    transition table[MAX_SIZE][2];
+
+    printf("Enter the number of states: ");
+    scanf("%d", &states);
+
+    printf("Enter the number of final states: ");
+    scanf("%d", &final_states);
+
+    printf("Enter the final states: ");
+    int final[final_states];
+    for (i = 0; i < final_states; i++)
+        scanf("%d", &final[i]);
+
+    printf("Enter the number of transitions: ");
+    scanf("%d", &transitions_count);
+
+    printf("Enter the transitions (i j C1 C2):\n");
+    for (i = 0; i < transitions_count; i++) {
+        scanf("%d %d %d %d", &table[i][0].state, &table[i][1].state, &table[i][0].to[0], &table[i][0].to[1]);
+    }
+
+    printf("Enter the string to check: ");
+    scanf("%s", str);
+    str_len = strlen(str);
+
+    int current[states];
+    for (i = 0; i < states; i++)
+        current[i] = 0;
+
+    accepting = 0;
+    for (i = 0; i < str_len; i++) {
+        for (j = 0; j < states; j++) {
+            if (current[j]) {
+                for (k = 0; k < transitions_count; k++) {
+                    if (table[k][0].state == j && str[i] == table[k][0].to[0]) {
+                        current[table[k][1].state] = 1;
+                    }
+                    if (table[k][0].state == j && str[i] == table[k][0].to[1]) {
+                        current[table[k][1].state] = 1;
+                    }
+                }
+            }
+        }
+    }
+
+    for (i = 0; i < final_states; i++) {
+        if (current[final[i]]) {
+            accepting = 1;
+            break;
+        }
+    }
+
+    if (accepting)
+        printf("Accepted\n");
+    else
+        printf("Rejected\n");
+
+    return 0;
+}
